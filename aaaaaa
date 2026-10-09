@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حسابات الصيدلية - دفتر الديون</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(rgba(10, 25, 47, 0.82), rgba(10, 25, 47, 0.88)), 
+                        url('https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .header h1 {
+            font-size: 22px;
+            color: #00f2fe;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: #e0e0e0;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0, 114, 255, 0.4);
+        }
+
+        .summary-card h3 {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .summary-card .total-amount {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: #4facfe;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            background: rgba(255, 255, 255, 0.95);
+            color: #111;
+            font-size: 14px;
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #00f2fe;
+            color: #0a192f;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 5px;
+        }
+
+        .btn-add:active {
+            transform: scale(0.98);
+        }
+
+        .debt-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .debt-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 4px solid #00f2fe;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .debt-info h4 {
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .debt-info p {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .debt-amount {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .btn-del {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>👨‍⚕️ صيدليتي - دفتر الديون</h1>
+        <p>نظام إدارة الديون والمستحقات الطبية</p>
+    </div>
+
+    <div class="summary-card">
+        <h3>إجمالي الديون المتبقية</h3>
+        <div class="total-amount" id="totalDebt">0 ريال</div>
+    </div>
+
+    <div class="form-card">
+        <div class="form-group">
+            <label>اسم العميل / المريض</label>
+            <input type="text" id="patientName" placeholder="أدخل الاسم..." />
+        </div>
+        <div class="form-group">
+            <label>المبلغ المطلوب</label>
+            <input type="number" id="debtAmount" placeholder="أدخل المبلغ..." />
+        </div>
+        <div class="form-group">
+            <label>تفاصيل العلاج / ملاحظات</label>
+            <input type="text" id="notes" placeholder="مثال: علاج ضغط + فيتامينات" />
+        </div>
+        <button class="btn-add" onclick="addDebt()">+ تسجيل الدين</button>
+    </div>
+
+    <h3 style="margin-bottom: 10px; font-size: 16px; color: #00f2fe;">سجل الديون الحالي:</h3>
+    <div class="debt-list" id="debtList"></div>
+</div>
+
+<script>
+    let debts = JSON.parse(localStorage.getItem('pharmacy_debts')) || [];
+
+    function updateUI() {
+        const listEl = document.getElementById('debtList');
+        const totalEl = document.getElementById('totalDebt');
+        listEl.innerHTML = '';
+        let total = 0;
+
+        debts.forEach((debt, index) => {
+            total += parseFloat(debt.amount);
+            listEl.innerHTML += `
+                <div class="debt-item">
+                    <div class="debt-info">
+                        <h4>${debt.name}</h4>
+                        <p>${debt.notes || 'بدون ملاحظات'}</p>
+                        <div class="actions">
+                            <button class="btn-del" onclick="deleteDebt(${index})">تصفية / حذف</button>
+                        </div>
+                    </div>
+                    <div class="debt-amount">${debt.amount} ريال</div>
+                </div>
+            `;
+        });
+
+        totalEl.innerText = total.toLocaleString() + ' ريال';
+        localStorage.setItem('pharmacy_debts', JSON.stringify(debts));
+    }
+
+    function addDebt() {
+        const name = document.getElementById('patientName').value.trim();
+        const amount = document.getElementById('debtAmount').value.trim();
+        const notes = document.getElementById('notes').value.trim();
+
+        if (!name || !amount) {
+            alert('يرجى إدخال اسم العميل والمبلغ!');
+            return;
+        }
+
+        debts.push({ name, amount: parseFloat(amount), notes });
+        document.getElementById('patientName').value = '';
+        document.getElementById('debtAmount').value = '';
+        document.getElementById('notes').value = '';
+        
+        updateUI();
+    }
+
+    function deleteDebt(index) {
+        if (confirm('هل تم تسديد هذا الدين أو تريد حذفه؟')) {
+            debts.splice(index, 1);
+            updateUI();
+        }
+    }
+
+    updateUI();
+</script>
+
+</body>
+</html>
